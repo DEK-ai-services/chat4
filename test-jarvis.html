@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .chat-box {
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            overflow-y: auto;
+            background-color: #fafafa;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .user-message {
+            background-color: #007bff;
+            color: white;
+            margin-left: 20%;
+        }
+        .jarvis-message {
+            background-color: #28a745;
+            color: white;
+            margin-right: 20%;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Jarvis Test Interface</h1>
+        <div id="status" class="status"></div>
+        <div class="chat-box" id="chatBox">
+            <div class="message jarvis-message">
+                Ahoj! Jsem Jarvis. Jak ti mohu pomoci?
+            </div>
+        </div>
+        <div class="input-group">
+            <input type="text" id="messageInput" placeholder="Napiš zprávu..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Odeslat</button>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chatBox');
+        const messageInput = document.getElementById('messageInput');
+        const statusDiv = document.getElementById('status');
+
+        function showStatus(message, isError = false) {
+            statusDiv.className = `status ${isError ? 'error' : 'success'}`;
+            statusDiv.textContent = message;
+            setTimeout(() => {
+                statusDiv.textContent = '';
+                statusDiv.className = 'status';
+            }, 3000);
+        }
+
+        function addMessage(text, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'jarvis-message'}`;
+            messageDiv.textContent = text;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Přidat uživatelskou zprávu
+            addMessage(message, true);
+            messageInput.value = '';
+
+            try {
+                showStatus('Odesílám zprávu...');
+                
+                const response = await fetch('http://localhost:3080/api/jarvis/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer test-token'
+                    },
+                    body: JSON.stringify({
+                        text: message,
+                        conversationId: null,
+                        parentMessageId: '00000000-0000-0000-0000-000000000000'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage(data.text || 'Jarvis odpověděl!');
+                    showStatus('Zpráva odeslána úspěšně!');
+                } else {
+                    const errorText = await response.text();
+                    addMessage(`Chyba: ${response.status} - ${errorText}`);
+                    showStatus(`Chyba: ${response.status}`, true);
+                }
+            } catch (error) {
+                addMessage(`Chyba připojení: ${error.message}`);
+                showStatus(`Chyba připojení: ${error.message}`, true);
+            }
+        }
+
+        // Test připojení při načtení stránky
+        window.onload = async function() {
+            try {
+                const response = await fetch('http://localhost:3080/api/jarvis/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer test-token'
+                    },
+                    body: JSON.stringify({
+                        text: 'test',
+                        conversationId: null,
+                        parentMessageId: '00000000-0000-0000-0000-000000000000'
+                    })
+                });
+                
+                if (response.status === 401) {
+                    showStatus('✅ Jarvis endpoint je dostupný (vyžaduje autentizaci)');
+                } else {
+                    showStatus(`✅ Jarvis endpoint odpovídá (status: ${response.status})`);
+                }
+            } catch (error) {
+                showStatus(`❌ Jarvis endpoint není dostupný: ${error.message}`, true);
+            }
+        };
+    </script>
+</body>
+</html> 
