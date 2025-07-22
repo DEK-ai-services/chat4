@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis Webhook Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        .warning { background-color: #fff3cd; color: #856404; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .log {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .instructions {
+            background-color: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .feature {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Jarvis Webhook Test</h1>
+        
+        <div class="feature">
+            <h3>🆕 Nová funkcionalita</h3>
+            <p><strong>Jarvis nyní čeká na odpověď z n8n workflow!</strong></p>
+            <ul>
+                <li>Odešle zprávu na n8n webhook</li>
+                <li>Čeká na odpověď (max 30 sekund)</li>
+                <li>Zobrazí odpověď z n8n místo "OK, jasné"</li>
+                <li>Fallback na "OK, jasné" pokud n8n neodpoví</li>
+            </ul>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Instrukce pro testování</h3>
+            <p><strong>Jarvis endpoint vyžaduje autentizaci.</strong> Pro testování webhooku:</p>
+            <ol>
+                <li>Spusťte LibreChat aplikaci</li>
+                <li>Přihlaste se do aplikace</li>
+                <li>Vyberte Jarvis model v nabídce</li>
+                <li>Odešlete zprávu</li>
+                <li>Jarvis čeká na odpověď z n8n (max 30s)</li>
+                <li>Zkontrolujte logy aplikace pro potvrzení webhook volání</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test Jarvis Endpointu (Bez Autentizace)</h3>
+            <p><em>Tento test pravděpodobně selže kvůli autentizaci, ale ukáže správné instrukce.</em></p>
+            <input type="text" id="messageInput" placeholder="Zadejte zprávu pro Jarvis..." value="Test webhooku - ">
+            <button onclick="testJarvis()">Odeslat Jarvis</button>
+            <div id="jarvisStatus"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test Přímého Webhooku</h3>
+            <p><em>Tento test ověří, že n8n webhook funguje a vrátí odpověď.</em></p>
+            <button onclick="testDirectWebhook()">Testovat Přímý Webhook</button>
+            <div id="webhookStatus"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Log</h3>
+            <div id="log" class="log"></div>
+            <button onclick="clearLog()">Vyčistit Log</button>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            logDiv.textContent += logEntry;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').textContent = '';
+        }
+
+        function showStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        async function testJarvis() {
+            const message = document.getElementById('messageInput').value;
+            if (!message.trim()) {
+                showStatus('jarvisStatus', 'Zadejte zprávu!', 'error');
+                return;
+            }
+
+            log(`🧪 Testuji Jarvis endpoint s zprávou: "${message}"`);
+            log(`📝 Jarvis nyní čeká na odpověď z n8n workflow`);
+            showStatus('jarvisStatus', 'Odesílám...', 'info');
+
+            try {
+                const response = await fetch('http://localhost:3080/api/jarvis/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: message,
+                        conversationId: null,
+                        parentMessageId: '00000000-0000-0000-0000-000000000000'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.text();
+                    log(`✅ Jarvis endpoint odpověděl (status: ${response.status})`);
+                    log(`📄 Odpověď: ${data}`);
+                    showStatus('jarvisStatus', `✅ Úspěch! Status: ${response.status}`, 'success');
+                } else if (response.status === 401) {
+                    log(`⚠️ Jarvis endpoint vyžaduje autentizaci (status: 401)`);
+                    log(`📝 Pro testování použijte LibreChat aplikaci`);
+                    showStatus('jarvisStatus', `⚠️ Vyžaduje autentizaci! Použijte LibreChat aplikaci.`, 'warning');
+                } else {
+                    const errorText = await response.text();
+                    log(`❌ Jarvis endpoint selhal (status: ${response.status})`);
+                    log(`📄 Chyba: ${errorText}`);
+                    showStatus('jarvisStatus', `❌ Chyba! Status: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Chyba při volání Jarvis endpointu: ${error.message}`);
+                showStatus('jarvisStatus', `❌ Chyba: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDirectWebhook() {
+            log('🔗 Testuji přímý webhook na n8n...');
+            showStatus('webhookStatus', 'Testuji...', 'info');
+
+            const webhookUrl = 'https://jarv1s.dekchecker.cloud/webhook/01853d92-764e-4432-a9fd-89432f9c0a4c';
+            const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMTFkNzVhMi1iODg0LTQ2ODMtYmUzNy02ZGU4NDE2ZTc1ZTEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzUzMTY0NDkyLCJleHAiOjE3NTU3MjcyMDB9.JetPd4s90kNwkfRTlSIQPCQzMDAWX4MUxK_6jXeHyHs';
+            
+            const testData = {
+                message: 'Přímý test webhooku - ' + new Date().toISOString(),
+                userId: 'test-user',
+                conversationId: 'test-conversation',
+                messageId: 'test-message',
+                timestamp: new Date().toISOString(),
+                source: 'direct-test'
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                if (response.ok) {
+                    log(`✅ Přímý webhook na n8n funguje! (status: ${response.status})`);
+                    
+                    // Zkusíme přečíst odpověď z n8n
+                    try {
+                        const responseData = await response.json();
+                        if (responseData.output) {
+                            log(`📤 n8n odpověď: ${responseData.output}`);
+                        } else {
+                            log(`📤 n8n odpověď (bez output): ${JSON.stringify(responseData)}`);
+                        }
+                    } catch (parseError) {
+                        const responseText = await response.text();
+                        log(`📤 n8n odpověď (nelze parsovat JSON): ${responseText}`);
+                    }
+                    
+                    showStatus('webhookStatus', `✅ Webhook funguje! Status: ${response.status}`, 'success');
+                } else {
+                    const errorText = await response.text();
+                    log(`❌ Přímý webhook na n8n selhal (status: ${response.status})`);
+                    log(`📄 Chyba: ${errorText}`);
+                    showStatus('webhookStatus', `❌ Webhook selhal! Status: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Chyba při testování přímého webhooku: ${error.message}`);
+                showStatus('webhookStatus', `❌ Chyba: ${error.message}`, 'error');
+            }
+        }
+
+        // Inicializace
+        log('🚀 Jarvis Webhook Test připraven');
+        log('🆕 Jarvis nyní čeká na odpověď z n8n workflow');
+        log('📝 Pro testování Jarvis endpointu použijte LibreChat aplikaci');
+        log('🔗 Přímý webhook test je dostupný níže');
+    </script>
+</body>
+</html> 

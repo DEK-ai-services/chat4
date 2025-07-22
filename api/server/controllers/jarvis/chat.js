@@ -3,10 +3,11 @@ const { logger } = require('@librechat/data-schemas');
 const { Constants } = require('librechat-data-provider');
 const { v4: uuidv4 } = require('uuid');
 const { saveMessage } = require('~/models');
+const axios = require('axios');
 
 /**
  * @route POST /api/jarvis/chat
- * @desc Chat with Jarvis (simple response)
+ * @desc Chat with Jarvis (with n8n webhook response)
  * @access Public
  */
 const chat = async (req, res) => {
@@ -47,10 +48,48 @@ const chat = async (req, res) => {
       },
     });
 
-    // Simple Jarvis response
-    const responseText = "OK, jasné";
+    // Odeslat zprávu na n8n webhook a čekat na odpověď
+    let responseText = "OK, jasné"; // Fallback odpověď
+    try {
+      const webhookUrl = 'https://jarv1s.dekchecker.cloud/webhook/01853d92-764e-4432-a9fd-89432f9c0a4c';
+      const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMTFkNzVhMi1iODg0LTQ2ODMtYmUzNy02ZGU4NDE2ZTc1ZTEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzUzMTY0NDkyLCJleHAiOjE3NTU3MjcyMDB9.JetPd4s90kNwkfRTlSIQPCQzMDAWX4MUxK_6jXeHyHs';
+      
+      const webhookData = {
+        message: text,
+        userId: userId,
+        conversationId: conversationId,
+        messageId: userMessageId,
+        timestamp: new Date().toISOString(),
+        source: 'jarvis'
+      };
 
-    // Create response message
+      const webhookResponse = await axios.post(webhookUrl, webhookData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        timeout: 30000 // 30 sekund timeout pro n8n odpověď
+      });
+
+      // Zpracovat odpověď z n8n
+      if (webhookResponse.status === 200 && webhookResponse.data) {
+        if (webhookResponse.data.output) {
+          responseText = webhookResponse.data.output;
+          logger.info('[/jarvis/chat] Received response from n8n:', responseText);
+        } else {
+          logger.warn('[/jarvis/chat] n8n response missing "output" field:', webhookResponse.data);
+        }
+      } else {
+        logger.warn('[/jarvis/chat] n8n returned non-200 status:', webhookResponse.status);
+      }
+
+      logger.info('[/jarvis/chat] Webhook sent successfully to n8n and received response');
+    } catch (webhookError) {
+      logger.error('[/jarvis/chat] Webhook error:', webhookError.message);
+      // Pokračujeme s fallback odpovědí i když webhook selže
+    }
+
+    // Create response message s odpovědí z n8n nebo fallback
     const responseMessage = {
       user: userId,
       text: responseText,
