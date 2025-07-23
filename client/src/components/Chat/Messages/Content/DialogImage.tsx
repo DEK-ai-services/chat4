@@ -189,7 +189,8 @@ export default function DialogImage({ isOpen, onOpenChange, src = '', downloadIm
         overlayClassName="bg-surface-primary opacity-95 z-50"
       >
         <div
-          className={`ease-[cubic-bezier(0.175,0.885,0.32,1.275)] absolute left-0 top-0 z-10 flex items-center justify-between p-3 transition-all duration-500 sm:p-4 ${isPromptOpen ? 'right-0 sm:right-80' : 'right-0'}`}
+          className={`absolute left-0 top-0 z-10 flex items-center justify-between p-3 transition-all duration-500 sm:p-4 ${isPromptOpen ? 'right-0 sm:right-80' : 'right-0'}`}
+          style={{ transitionTimingFunction: 'cubic-bezier(0.175,0.885,0.32,1.275)' }}
         >
           <TooltipAnchor
             description={localize('com_ui_close')}
@@ -247,7 +248,8 @@ export default function DialogImage({ isOpen, onOpenChange, src = '', downloadIm
 
         {/* Main content area with image */}
         <div
-          className={`ease-[cubic-bezier(0.175,0.885,0.32,1.275)] flex h-full transition-all duration-500 ${isPromptOpen ? 'mr-0 sm:mr-80' : 'mr-0'}`}
+          className={`flex h-full transition-all duration-500 ${isPromptOpen ? 'mr-0 sm:mr-80' : 'mr-0'}`}
+          style={{ transitionTimingFunction: 'cubic-bezier(0.175,0.885,0.32,1.275)' }}
         >
           <div
             ref={containerRef}
@@ -293,9 +295,10 @@ export default function DialogImage({ isOpen, onOpenChange, src = '', downloadIm
 
         {/* Side Panel */}
         <div
-          className={`sm:shadow-l-lg ease-[cubic-bezier(0.175,0.885,0.32,1.275)] fixed right-0 top-0 z-20 h-full w-full transform border-l border-border-light bg-surface-primary shadow-2xl backdrop-blur-sm transition-transform duration-500 sm:w-80 sm:rounded-l-2xl ${
+          className={`sm:shadow-l-lg fixed right-0 top-0 z-20 h-full w-full transform border-l border-border-light bg-surface-primary shadow-2xl backdrop-blur-sm transition-transform duration-500 sm:w-80 sm:rounded-l-2xl ${
             isPromptOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
+          style={{ transitionTimingFunction: 'cubic-bezier(0.175,0.885,0.32,1.275)' }}
         >
           {/* Mobile pull handle - removed for cleaner look */}
 

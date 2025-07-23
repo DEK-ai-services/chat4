@@ -35,18 +35,7 @@ async function loadAsyncEndpoints(req) {
   const google = serviceKey || isGoogleKeyProvided ? { userProvide: googleUserProvides } : false;
 
   const useAzure = req.app.locals[EModelEndpoint.azureOpenAI]?.plugins;
-  const gptPlugins =
-    useAzure || openAIApiKey || azureOpenAIApiKey
-      ? {
-          availableAgents: ['classic', 'functions'],
-          userProvide: useAzure ? false : userProvidedOpenAI,
-          userProvideURL: useAzure
-            ? false
-            : config[EModelEndpoint.openAI]?.userProvideURL ||
-              config[EModelEndpoint.azureOpenAI]?.userProvideURL,
-          azure: useAzurePlugins || useAzure,
-        }
-      : false;
+  const gptPlugins = false; // Disabled
 
   return { google, gptPlugins };
 }

@@ -25,12 +25,11 @@ type EndpointSchema =
   | typeof openAISchema
   | typeof googleSchema
   | typeof anthropicSchema
-  | typeof gptPluginsSchema
   | typeof assistantSchema
   | typeof compactAgentsSchema
   | typeof bedrockInputSchema;
 
-export type EndpointSchemaKey = Exclude<EModelEndpoint, EModelEndpoint.chatGPTBrowser>;
+export type EndpointSchemaKey = Exclude<EModelEndpoint, EModelEndpoint.chatGPTBrowser | EModelEndpoint.gptPlugins>;
 
 const endpointSchemas: Record<EndpointSchemaKey, EndpointSchema> = {
   [EModelEndpoint.openAI]: openAISchema,
@@ -38,7 +37,6 @@ const endpointSchemas: Record<EndpointSchemaKey, EndpointSchema> = {
   [EModelEndpoint.custom]: openAISchema,
   [EModelEndpoint.google]: googleSchema,
   [EModelEndpoint.anthropic]: anthropicSchema,
-  [EModelEndpoint.gptPlugins]: gptPluginsSchema,
   [EModelEndpoint.assistants]: assistantSchema,
   [EModelEndpoint.azureAssistants]: assistantSchema,
   [EModelEndpoint.agents]: compactAgentsSchema,
@@ -60,7 +58,6 @@ export function getEnabledEndpoints() {
     EModelEndpoint.azureOpenAI,
     EModelEndpoint.google,
     EModelEndpoint.chatGPTBrowser,
-    EModelEndpoint.gptPlugins,
     EModelEndpoint.anthropic,
     EModelEndpoint.bedrock,
     EModelEndpoint.jarvis,
@@ -231,7 +228,6 @@ export const getResponseSender = (endpointOption: t.TEndpointOption): string => 
     [
       EModelEndpoint.openAI,
       EModelEndpoint.bedrock,
-      EModelEndpoint.gptPlugins,
       EModelEndpoint.azureOpenAI,
       EModelEndpoint.chatGPTBrowser,
     ].includes(endpoint)
@@ -250,6 +246,9 @@ export const getResponseSender = (endpointOption: t.TEndpointOption): string => 
       const gptVersion = extractGPTVersion(model);
       return gptVersion || 'GPT';
     }
+    if (endpoint === EModelEndpoint.gptPlugins) {
+      return 'Plugins';
+    }
     return (alternateName[endpoint] as string | undefined) ?? 'ChatGPT';
   }
 
@@ -258,7 +257,7 @@ export const getResponseSender = (endpointOption: t.TEndpointOption): string => 
   }
 
   if (endpoint === EModelEndpoint.bedrock) {
-    return modelLabel || alternateName[endpoint];
+    return modelLabel || (alternateName[endpoint] as string | undefined) || 'Bedrock';
   }
 
   if (endpoint === EModelEndpoint.jarvis) {
@@ -305,8 +304,7 @@ type CompactEndpointSchema =
   | typeof compactAgentsSchema
   | typeof compactGoogleSchema
   | typeof anthropicSchema
-  | typeof bedrockInputSchema
-  | typeof compactPluginsSchema;
+  | typeof bedrockInputSchema;
 
 const compactEndpointSchemas: Record<EndpointSchemaKey, CompactEndpointSchema> = {
   [EModelEndpoint.openAI]: openAISchema,
@@ -318,7 +316,6 @@ const compactEndpointSchemas: Record<EndpointSchemaKey, CompactEndpointSchema> =
   [EModelEndpoint.google]: compactGoogleSchema,
   [EModelEndpoint.bedrock]: bedrockInputSchema,
   [EModelEndpoint.anthropic]: anthropicSchema,
-  [EModelEndpoint.gptPlugins]: compactPluginsSchema,
   [EModelEndpoint.jarvis]: openAISchema,
 };
 

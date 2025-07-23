@@ -21,7 +21,6 @@ async function loadDefaultEndpointsConfig(req) {
     [EModelEndpoint.azureOpenAI]: azureOpenAI,
     [EModelEndpoint.google]: google,
     [EModelEndpoint.chatGPTBrowser]: chatGPTBrowser,
-    [EModelEndpoint.gptPlugins]: gptPlugins,
     [EModelEndpoint.anthropic]: config[EModelEndpoint.anthropic],
     [EModelEndpoint.bedrock]: config[EModelEndpoint.bedrock],
     [EModelEndpoint.jarvis]: { userProvide: false },

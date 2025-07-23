@@ -802,7 +802,6 @@ export const defaultEndpoints: EModelEndpoint[] = [
   EModelEndpoint.azureOpenAI,
   EModelEndpoint.agents,
   EModelEndpoint.chatGPTBrowser,
-  EModelEndpoint.gptPlugins,
   EModelEndpoint.google,
   EModelEndpoint.anthropic,
   EModelEndpoint.custom,
@@ -817,7 +816,6 @@ export const alternateName = {
   [EModelEndpoint.azureAssistants]: 'Azure Assistants',
   [EModelEndpoint.azureOpenAI]: 'Azure OpenAI',
   [EModelEndpoint.chatGPTBrowser]: 'ChatGPT',
-  [EModelEndpoint.gptPlugins]: 'Plugins',
   [EModelEndpoint.google]: 'Google',
   [EModelEndpoint.anthropic]: 'Anthropic',
   [EModelEndpoint.custom]: 'Custom',
@@ -963,7 +961,6 @@ export const EndpointURLs = {
 } as const;
 
 export const modularEndpoints = new Set<EModelEndpoint | string>([
-  EModelEndpoint.gptPlugins,
   EModelEndpoint.anthropic,
   EModelEndpoint.google,
   EModelEndpoint.openAI,
