@@ -1,21 +1,21 @@
 const axios = require('axios');
 
-// Test data pro Jarvis
+// Test data pro Edie
 const testData = {
-  message: "Ahoj Jarvis, jak se máš?",
+  message: "Ahoj Edie, jak se máš?",
   userId: "test-user-123",
   conversationId: "test-conversation-456",
   messageId: "test-message-789",
   timestamp: new Date().toISOString(),
-  source: 'jarvis'
+  source: 'edie'
 };
 
-// Webhook URL pro Jarvis
-const webhookUrl = 'https://jarv1s.dekchecker.cloud/webhook/01853d92-764e-4432-a9fd-89432f9c0a4c';
+// Webhook URL pro Edie (stejná jako Jarvis pro testování)
+const webhookUrl = 'https://jarv1s.dekchecker.cloud/webhook/923098bd-432d-46c4-ab09-b891531b05bc';
 const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMTFkNzVhMi1iODg0LTQ2ODMtYmUzNy02ZGU4NDE2ZTc1ZTEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzUzMTY0NDkyLCJleHAiOjE3NTU3MjcyMDB9.JetPd4s90kNwkfRTlSIQPCQzMDAWX4MUxK_6jXeHyHs';
 
-async function testJarvisWebhook() {
-  console.log('🤖 Testování Jarvis webhook komunikace s n8n...');
+async function testEdieWebhook() {
+  console.log('🧪 Testování Edie webhook komunikace s n8n...');
   console.log('📤 Odesílám data:', JSON.stringify(testData, null, 2));
   console.log('🌐 Webhook URL:', webhookUrl);
   
@@ -59,7 +59,7 @@ async function testJarvisWebhook() {
 }
 
 // Spustit test
-testJarvisWebhook().then(() => {
+testEdieWebhook().then(() => {
   console.log('\n🏁 Test dokončen');
 }).catch((error) => {
   console.log('\n💥 Neočekávaná chyba:', error.message);

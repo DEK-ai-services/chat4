@@ -6,8 +6,8 @@ const { saveMessage } = require('~/models');
 const axios = require('axios');
 
 /**
- * @route POST /api/jarvis/chat
- * @desc Chat with Jarvis (with n8n webhook response)
+ * @route POST /api/edie/chat
+ * @desc Chat with Edie (with n8n webhook response) - TEXT VERSION
  * @access Public
  */
 const chat = async (req, res) => {
@@ -31,8 +31,8 @@ const chat = async (req, res) => {
       parentMessageId,
       conversationId,
       isCreatedByUser: true,
-      endpoint: 'jarvis',
-      model: 'jarvis',
+      endpoint: 'edie',
+      model: 'edie',
     };
 
     // Save user message
@@ -51,7 +51,7 @@ const chat = async (req, res) => {
     // Odeslat zprávu na n8n webhook a čekat na odpověď
     let responseText = "OK, jasné"; // Fallback odpověď
     try {
-      const webhookUrl = 'https://jarv1s.dekchecker.cloud/webhook/01853d92-764e-4432-a9fd-89432f9c0a4c';
+      const webhookUrl = 'https://jarv1s.dekchecker.cloud/webhook/923098bd-432d-46c4-ab09-b891531b05bc';
       const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMTFkNzVhMi1iODg0LTQ2ODMtYmUzNy02ZGU4NDE2ZTc1ZTEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzUzMTY0NDkyLCJleHAiOjE3NTU3MjcyMDB9.JetPd4s90kNwkfRTlSIQPCQzMDAWX4MUxK_6jXeHyHs';
       
       const webhookData = {
@@ -60,11 +60,11 @@ const chat = async (req, res) => {
         conversationId: conversationId,
         messageId: userMessageId,
         timestamp: new Date().toISOString(),
-        source: 'jarvis'
+        source: 'edie'
       };
 
-      logger.info('[/jarvis/chat] Sending webhook request to:', webhookUrl);
-      logger.info('[/jarvis/chat] Webhook data:', JSON.stringify(webhookData, null, 2));
+      logger.info('[/edie/chat] Sending webhook request to:', webhookUrl);
+      logger.info('[/edie/chat] Webhook data:', JSON.stringify(webhookData, null, 2));
 
       const webhookResponse = await axios.post(webhookUrl, webhookData, {
         headers: {
@@ -74,27 +74,31 @@ const chat = async (req, res) => {
         timeout: 30000 // 30 sekund timeout pro n8n odpověď
       });
 
-      logger.info('[/jarvis/chat] Webhook response status:', webhookResponse.status);
-      logger.info('[/jarvis/chat] Webhook response data:', JSON.stringify(webhookResponse.data, null, 2));
+      logger.info('[/edie/chat] Webhook response status:', webhookResponse.status);
+      logger.info('[/edie/chat] Webhook response data:', JSON.stringify(webhookResponse.data, null, 2));
 
-      // Zpracovat odpověď z n8n
+      // Zpracovat odpověď z n8n - n8n vrací text, ne JSON
       if (webhookResponse.status === 200 && webhookResponse.data) {
-        if (webhookResponse.data.output) {
+        if (typeof webhookResponse.data === 'string') {
+          responseText = webhookResponse.data;
+          logger.info('[/edie/chat] Received text response from n8n:', responseText);
+        } else if (webhookResponse.data.output) {
+          // Fallback pro případ, že n8n vrátí JSON s output polem
           responseText = webhookResponse.data.output;
-          logger.info('[/jarvis/chat] Received response from n8n:', responseText);
+          logger.info('[/edie/chat] Received JSON response with output from n8n:', responseText);
         } else {
-          logger.warn('[/jarvis/chat] n8n response missing "output" field:', webhookResponse.data);
+          logger.warn('[/edie/chat] n8n response is not text or JSON with output field:', webhookResponse.data);
         }
       } else {
-        logger.warn('[/jarvis/chat] n8n returned non-200 status:', webhookResponse.status);
+        logger.warn('[/edie/chat] n8n returned non-200 status:', webhookResponse.status);
       }
 
-      logger.info('[/jarvis/chat] Webhook sent successfully to n8n and received response');
+      logger.info('[/edie/chat] Webhook sent successfully to n8n and received response');
     } catch (webhookError) {
-      logger.error('[/jarvis/chat] Webhook error:', webhookError.message);
+      logger.error('[/edie/chat] Webhook error:', webhookError.message);
       if (webhookError.response) {
-        logger.error('[/jarvis/chat] Webhook error response status:', webhookError.response.status);
-        logger.error('[/jarvis/chat] Webhook error response data:', webhookError.response.data);
+        logger.error('[/edie/chat] Webhook error response status:', webhookError.response.status);
+        logger.error('[/edie/chat] Webhook error response data:', webhookError.response.data);
       }
       // Pokračujeme s fallback odpovědí i když webhook selže
     }
@@ -107,8 +111,8 @@ const chat = async (req, res) => {
       parentMessageId: userMessageId,
       conversationId,
       isCreatedByUser: false,
-      endpoint: 'jarvis',
-      model: 'jarvis',
+      endpoint: 'edie',
+      model: 'edie',
       // Neposílat audio URL, aby se předešlo TTS chybám
       audio: null,
     };
@@ -123,8 +127,8 @@ const chat = async (req, res) => {
       responseMessage: responseMessage,
       conversation: {
         conversationId,
-        endpoint: 'jarvis',
-        model: 'jarvis',
+        endpoint: 'edie',
+        model: 'edie',
       },
     });
 
@@ -132,7 +136,7 @@ const chat = async (req, res) => {
     res.end();
 
   } catch (error) {
-    logger.error('[/jarvis/chat] Error:', error);
+    logger.error('[/edie/chat] Error:', error);
     sendEvent(res, {
       error: {
         message: 'An error occurred while processing the request',
@@ -143,4 +147,4 @@ const chat = async (req, res) => {
   }
 };
 
-module.exports = chat; 
+module.exports = chat;

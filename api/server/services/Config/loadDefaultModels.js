@@ -5,6 +5,8 @@ const {
   getGoogleModels,
   getBedrockModels,
   getAnthropicModels,
+  getJarvisModels,
+  getEdieModels,
 } = require('~/server/services/ModelService');
 const { logger } = require('~/config');
 
@@ -25,6 +27,8 @@ async function loadDefaultModels(req) {
       azureAssistants,
       google,
       bedrock,
+      jarvis,
+      edie,
     ] = await Promise.all([
       getOpenAIModels({ user: req.user.id }).catch((error) => {
         logger.error('Error fetching OpenAI models:', error);
@@ -60,6 +64,14 @@ async function loadDefaultModels(req) {
         logger.error('Error getting Bedrock models:', error);
         return [];
       }),
+      Promise.resolve(getJarvisModels()).catch((error) => {
+        logger.error('Error getting Jarvis models:', error);
+        return [];
+      }),
+      Promise.resolve(getEdieModels()).catch((error) => {
+        logger.error('Error getting Edie models:', error);
+        return [];
+      }),
     ]);
 
     return {
@@ -72,6 +84,8 @@ async function loadDefaultModels(req) {
       [EModelEndpoint.assistants]: assistants,
       [EModelEndpoint.azureAssistants]: azureAssistants,
       [EModelEndpoint.bedrock]: bedrock,
+      [EModelEndpoint.jarvis]: jarvis,
+      [EModelEndpoint.edie]: edie,
     };
   } catch (error) {
     logger.error('Error fetching default models:', error);

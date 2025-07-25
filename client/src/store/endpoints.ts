@@ -13,6 +13,7 @@ const defaultConfig: TEndpointsConfig = {
   [EModelEndpoint.anthropic]: null,
   [EModelEndpoint.custom]: null,
   [EModelEndpoint.jarvis]: null,
+  [EModelEndpoint.edie]: null,
 };
 
 const endpointsConfig = atom<TEndpointsConfig>({

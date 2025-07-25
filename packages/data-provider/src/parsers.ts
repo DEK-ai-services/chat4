@@ -42,6 +42,7 @@ const endpointSchemas: Record<EndpointSchemaKey, EndpointSchema> = {
   [EModelEndpoint.agents]: compactAgentsSchema,
   [EModelEndpoint.bedrock]: bedrockInputSchema,
   [EModelEndpoint.jarvis]: openAISchema,
+  [EModelEndpoint.edie]: openAISchema,
 };
 
 // const schemaCreators: Record<EModelEndpoint, (customSchema: DefaultSchemaValues) => EndpointSchema> = {
@@ -61,6 +62,7 @@ export function getEnabledEndpoints() {
     EModelEndpoint.anthropic,
     EModelEndpoint.bedrock,
     EModelEndpoint.jarvis,
+    EModelEndpoint.edie,
   ];
 
   const endpointsEnv = process.env.ENDPOINTS ?? '';
@@ -317,6 +319,7 @@ const compactEndpointSchemas: Record<EndpointSchemaKey, CompactEndpointSchema> =
   [EModelEndpoint.bedrock]: bedrockInputSchema,
   [EModelEndpoint.anthropic]: anthropicSchema,
   [EModelEndpoint.jarvis]: openAISchema,
+  [EModelEndpoint.edie]: openAISchema,
 };
 
 export const parseCompactConvo = ({

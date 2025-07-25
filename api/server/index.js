@@ -111,6 +111,7 @@ const startServer = async () => {
   app.use('/api/config', routes.config);
   app.use('/api/assistants', routes.assistants);
   app.use('/api/jarvis', routes.jarvis);
+  app.use('/api/edie', routes.edie);
   app.use('/api/files', await routes.files.initialize());
   app.use('/images/', validateImageRequest, routes.staticRoute);
   app.use('/api/share', routes.share);

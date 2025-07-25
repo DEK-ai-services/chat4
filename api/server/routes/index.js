@@ -27,6 +27,7 @@ const keys = require('./keys');
 const user = require('./user');
 const mcp = require('./mcp');
 const jarvis = require('./jarvis');
+const edie = require('./edie');
 
 module.exports = {
   edit,
@@ -58,4 +59,5 @@ module.exports = {
   staticRoute,
   mcp,
   jarvis,
+  edie,
 };

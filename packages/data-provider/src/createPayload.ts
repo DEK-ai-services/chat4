@@ -23,9 +23,11 @@ export default function createPayload(submission: t.TSubmission) {
   const endpoint = _e as s.EModelEndpoint;
   let server;
   
-  // Speciální logika pro Jarvis - použít správnou URL
+  // Speciální logika pro Jarvis a Edie - použít správnou URL
   if (endpoint === s.EModelEndpoint.jarvis) {
     server = EndpointURLs[s.EModelEndpoint.jarvis];
+  } else if (endpoint === s.EModelEndpoint.edie) {
+    server = EndpointURLs[s.EModelEndpoint.edie];
   } else if (s.isAssistantsEndpoint(endpoint)) {
     server =
       EndpointURLs[(endpointType ?? endpoint) as 'assistants' | 'azureAssistants'] +

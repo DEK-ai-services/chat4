@@ -13,6 +13,7 @@ import {
   BedrockIcon,
   Sparkles,
   JarvisIcon,
+  EdieIcon,
 } from '~/components/svg';
 import UnknownIcon from './UnknownIcon';
 import { cn } from '~/utils';
@@ -74,5 +75,6 @@ export const icons: IconsRecord = {
   [EModelEndpoint.agents]: AgentAvatar,
   [EModelEndpoint.bedrock]: Bedrock,
   [EModelEndpoint.jarvis]: JarvisIcon,
+  [EModelEndpoint.edie]: EdieIcon,
   unknown: UnknownIcon,
 };

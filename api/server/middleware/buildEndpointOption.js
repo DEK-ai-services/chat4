@@ -27,6 +27,7 @@ const buildFunction = {
   [EModelEndpoint.assistants]: assistants.buildOptions,
   [EModelEndpoint.azureAssistants]: azureAssistants.buildOptions,
   [EModelEndpoint.jarvis]: () => ({}), // Jarvis nepoužívá custom endpoint
+  [EModelEndpoint.edie]: () => ({}), // Edie nepoužívá custom endpoint
 };
 
 async function buildEndpointOption(req, res, next) {
@@ -85,7 +86,7 @@ async function buildEndpointOption(req, res, next) {
   try {
     const isAgents =
       (isAgentsEndpoint(endpoint) || req.baseUrl.startsWith(EndpointURLs[EModelEndpoint.agents])) &&
-      endpoint !== EModelEndpoint.jarvis; // Jarvis nepoužívá agents systém
+      endpoint !== EModelEndpoint.jarvis && endpoint !== EModelEndpoint.edie; // Jarvis a Edie nepoužívají agents systém
     const builder = isAgents
       ? (...args) => buildFunction[EModelEndpoint.agents](req, ...args)
       : buildFunction[endpointType ?? endpoint];

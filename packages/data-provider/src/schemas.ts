@@ -26,6 +26,7 @@ export enum EModelEndpoint {
   custom = 'custom',
   bedrock = 'bedrock',
   jarvis = 'jarvis',
+  edie = 'edie',
   /** @deprecated */
   chatGPTBrowser = 'chatGPTBrowser',
   /** @deprecated */
@@ -41,6 +42,7 @@ export const paramEndpoints = new Set<EModelEndpoint | string>([
   EModelEndpoint.custom,
   EModelEndpoint.google,
   EModelEndpoint.jarvis,
+  EModelEndpoint.edie,
 ]);
 
 export enum BedrockProviders {

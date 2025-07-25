@@ -754,6 +754,7 @@ export const configSchema = z.object({
       [EModelEndpoint.custom]: z.array(endpointSchema.partial()).optional(),
       [EModelEndpoint.bedrock]: baseEndpointSchema.optional(),
       [EModelEndpoint.jarvis]: baseEndpointSchema.optional(),
+      [EModelEndpoint.edie]: baseEndpointSchema.optional(),
     })
     .strict()
     .refine((data) => Object.keys(data).length > 0, {
@@ -807,6 +808,7 @@ export const defaultEndpoints: EModelEndpoint[] = [
   EModelEndpoint.custom,
   EModelEndpoint.bedrock,
   EModelEndpoint.jarvis,
+  EModelEndpoint.edie,
 ];
 
 export const alternateName = {
@@ -821,6 +823,7 @@ export const alternateName = {
   [EModelEndpoint.custom]: 'Custom',
   [EModelEndpoint.bedrock]: 'AWS Bedrock',
   [EModelEndpoint.jarvis]: 'Jarvis',
+  [EModelEndpoint.edie]: 'Edie',
   [KnownEndpoints.ollama]: 'Ollama',
   [KnownEndpoints.deepseek]: 'DeepSeek',
   [KnownEndpoints.xai]: 'xAI',
@@ -932,6 +935,8 @@ export const defaultModels = {
     'gpt-3.5-turbo-instruct',
   ],
   [EModelEndpoint.bedrock]: bedrockModels,
+  [EModelEndpoint.jarvis]: ['jarvis'],
+  [EModelEndpoint.edie]: ['edie'],
 };
 
 const fitlerAssistantModels = (str: string) => {
@@ -951,6 +956,8 @@ export const initialModelsConfig: TModelsConfig = {
   [EModelEndpoint.google]: defaultModels[EModelEndpoint.google],
   [EModelEndpoint.anthropic]: defaultModels[EModelEndpoint.anthropic],
   [EModelEndpoint.bedrock]: defaultModels[EModelEndpoint.bedrock],
+  [EModelEndpoint.jarvis]: defaultModels[EModelEndpoint.jarvis],
+  [EModelEndpoint.edie]: defaultModels[EModelEndpoint.edie],
 };
 
 export const EndpointURLs = {
@@ -958,6 +965,7 @@ export const EndpointURLs = {
   [EModelEndpoint.azureAssistants]: '/api/assistants/v1/chat',
   [EModelEndpoint.agents]: `/api/${EModelEndpoint.agents}/chat`,
   [EModelEndpoint.jarvis]: '/api/jarvis/chat',
+  [EModelEndpoint.edie]: '/api/edie/chat',
 } as const;
 
 export const modularEndpoints = new Set<EModelEndpoint | string>([
@@ -969,6 +977,7 @@ export const modularEndpoints = new Set<EModelEndpoint | string>([
   EModelEndpoint.agents,
   EModelEndpoint.bedrock,
   EModelEndpoint.jarvis,
+  EModelEndpoint.edie,
 ]);
 
 export const supportsBalanceCheck = {

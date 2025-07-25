@@ -1,7 +1,7 @@
 import React from 'react';
-import { IconProps } from '~/common';
+import { IconMapProps } from '~/common';
 
-const JarvisIcon: React.FC<IconProps> = ({ size = 30, className = '' }) => {
+const JarvisIcon: React.FC<IconMapProps> = ({ size = 30, className = '' }) => {
   return (
     <svg
       width={size}

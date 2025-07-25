@@ -50,5 +50,6 @@ module.exports = {
     /* key will be part of separate config */
     [EModelEndpoint.agents]: generateConfig('true', undefined, EModelEndpoint.agents),
     [EModelEndpoint.jarvis]: generateConfig('true'),
+    [EModelEndpoint.edie]: generateConfig('true'),
   },
 };

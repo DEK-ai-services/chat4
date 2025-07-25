@@ -65,3 +65,4 @@ export { default as PersonalizationIcon } from './PersonalizationIcon';
 export { default as MCPIcon } from './MCPIcon';
 export { default as VectorIcon } from './VectorIcon';
 export { default as JarvisIcon } from './JarvisIcon';
+export { default as EdieIcon } from './EdieIcon';

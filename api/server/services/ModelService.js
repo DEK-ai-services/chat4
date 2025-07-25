@@ -326,6 +326,24 @@ const getBedrockModels = () => {
   return models;
 };
 
+const getJarvisModels = () => {
+  let models = defaultModels[EModelEndpoint.jarvis];
+  if (process.env.JARVIS_MODELS) {
+    models = splitAndTrim(process.env.JARVIS_MODELS);
+  }
+
+  return models;
+};
+
+const getEdieModels = () => {
+  let models = defaultModels[EModelEndpoint.edie];
+  if (process.env.EDIE_MODELS) {
+    models = splitAndTrim(process.env.EDIE_MODELS);
+  }
+
+  return models;
+};
+
 module.exports = {
   fetchModels,
   splitAndTrim,
@@ -334,4 +352,6 @@ module.exports = {
   getChatGPTBrowserModels,
   getAnthropicModels,
   getGoogleModels,
+  getJarvisModels,
+  getEdieModels,
 };

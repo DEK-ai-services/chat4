@@ -28,6 +28,7 @@ const providerConfigMap = {
   [EModelEndpoint.anthropic]: initAnthropic,
   [EModelEndpoint.bedrock]: getBedrockOptions,
   [EModelEndpoint.jarvis]: () => ({}), // Přidáno pro podporu Jarvis endpointu
+  [EModelEndpoint.edie]: () => ({}), // Přidáno pro podporu Edie endpointu
 };
 
 /**
@@ -45,8 +46,8 @@ async function getProviderConfig(provider) {
   /** @type {TEndpoint | undefined} */
   let customEndpointConfig;
 
-  // Speciální logika pro Jarvis - nepoužívá custom endpoint
-  if (provider === EModelEndpoint.jarvis) {
+  // Speciální logika pro Jarvis a Edie - nepoužívá custom endpoint
+  if (provider === EModelEndpoint.jarvis || provider === EModelEndpoint.edie) {
     return {
       getOptions: () => ({}),
       overrideProvider: undefined,

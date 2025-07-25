@@ -24,6 +24,7 @@ async function loadDefaultEndpointsConfig(req) {
     [EModelEndpoint.anthropic]: config[EModelEndpoint.anthropic],
     [EModelEndpoint.bedrock]: config[EModelEndpoint.bedrock],
     [EModelEndpoint.jarvis]: { userProvide: false },
+    [EModelEndpoint.edie]: { userProvide: false },
   };
 
   const orderedAndFilteredEndpoints = enabledEndpoints.reduce((config, key, index) => {

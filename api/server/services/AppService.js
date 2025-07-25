@@ -150,6 +150,7 @@ const AppService = async (app) => {
     EModelEndpoint.bedrock,
     EModelEndpoint.anthropic,
     EModelEndpoint.jarvis,
+    EModelEndpoint.edie,
   ];
 
   endpointKeys.forEach((key) => {
