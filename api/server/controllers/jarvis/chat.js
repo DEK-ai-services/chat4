@@ -77,7 +77,7 @@ const chat = async (req, res) => {
       logger.info('[/jarvis/chat] Webhook response status:', webhookResponse.status);
       logger.info('[/jarvis/chat] Webhook response data:', JSON.stringify(webhookResponse.data, null, 2));
 
-      // Zpracovat odpověď z n8n
+      // Zpracovat odpověď z n8n po dokončení
       if (webhookResponse.status === 200 && webhookResponse.data) {
         if (webhookResponse.data.output) {
           responseText = webhookResponse.data.output;
